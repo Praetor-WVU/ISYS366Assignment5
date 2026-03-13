@@ -2,7 +2,7 @@
 @model ISYS366Assignment3.Pages.Movies.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Movies";
 }
 
 <h1>Index</h1>
@@ -49,7 +49,7 @@
             <td>
                 @if (!string.IsNullOrEmpty(item.ImageUri))
                 {
-                    <img src="@item.ImageUri" class="my-thumbnail-class" />
+                    <img src="@item.ImageUri" class="movie-thumb" alt="@item.Title" />
                 }
             </td>
             <td>

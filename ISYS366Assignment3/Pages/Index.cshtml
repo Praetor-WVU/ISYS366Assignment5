@@ -1,10 +1,49 @@
 ﻿@page
-@model IndexModel
+@model ISYS366Assignment3.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Movies";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1 class="mb-4">Movies</h1>
+
+<div class="row">
+    @if (Model.Movies != null && Model.Movies.Any())
+    {
+        foreach (var movie in Model.Movies)
+        {
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <div class="row mb-2 font-weight-bold align-items-center">
+                            <div class="col-1">
+                                <strong>@movie.Rank</strong>
+                            </div>
+                            <div class="col-8 text-truncate">
+                                <strong>@movie.Title</strong>
+                            </div>
+                            <div class="col-3 text-right">
+                                <strong>@movie.Price.ToString("C")</strong>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(movie.ImageUri))
+                        {
+                            <img src="@movie.ImageUri" class="card-img-top mb-2 movie-img" alt="@movie.Title" />
+                        }
+                        <p class="mb-1"><strong>Release:</strong> @movie.ReleaseDate.ToShortDateString()</p>
+                        <p class="mb-3"><strong>Genre:</strong> @movie.Genre</p>
+
+                        <div class="mt-auto">
+                            <a class="btn btn-primary btn-sm" asp-page="/Details" asp-route-id="@movie.Id">Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p>No movies available.</p>
+        </div>
+    }
 </div>
