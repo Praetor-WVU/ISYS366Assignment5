@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ISYS366Assignment3.Data;
 using ISYS366Assignment3.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ISYS366Assignment3Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ISYS366Assignment3Context") ?? throw new InvalidOperationException("Connection string 'ISYS366Assignment3Context' not found.")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<ISYS366Assignment3Context>();
 
 var app = builder.Build();
 
