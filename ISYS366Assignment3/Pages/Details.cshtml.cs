@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ISYS366Assignment3.Data;
+using ISYS366Assignment3.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using ISYS366Assignment3.Data;
-using ISYS366Assignment3.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ISYS366Assignment5.Pages
 {
+    [Authorize]
     public class DetailsModel : PageModel
     {
         private readonly ISYS366Assignment3.Data.ISYS366Assignment3Context _context;
