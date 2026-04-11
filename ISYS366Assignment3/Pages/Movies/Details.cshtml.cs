@@ -12,32 +12,20 @@ namespace ISYS366Assignment3.Pages.Movies
 {
     public class DetailsModel : PageModel
     {
-        private readonly ISYS366Assignment3.Data.ISYS366Assignment3Context _context;
+        private readonly IMovieRepo _repo;
 
-        public DetailsModel(ISYS366Assignment3.Data.ISYS366Assignment3Context context)
+        public DetailsModel(IMovieRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        public Movie Movie { get; set; } = default!;
+        public Models.Movie MovieObject { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (movie is not null)
-            {
-                Movie = movie;
-
-                return Page();
-            }
-
-            return NotFound();
+            MovieObject = await _repo.GetByIdAsync(id);
+            return Page();
         }
+
     }
 }

@@ -12,11 +12,11 @@ namespace ISYS366Assignment3.Pages.Movies
 {
     public class DeleteModel : PageModel
     {
-        private readonly ISYS366Assignment3.Data.ISYS366Assignment3Context _context;
+        private readonly IMovieRepo _repo;
 
-        public DeleteModel(ISYS366Assignment3.Data.ISYS366Assignment3Context context)
+        public DeleteModel(IMovieRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         [BindProperty]
@@ -29,7 +29,7 @@ namespace ISYS366Assignment3.Pages.Movies
                 return NotFound();
             }
 
-            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
+            var movie = await _repo.GetByIdAsync(id.Value);
 
             if (movie is not null)
             {
@@ -48,12 +48,11 @@ namespace ISYS366Assignment3.Pages.Movies
                 return NotFound();
             }
 
-            var movie = await _context.Movie.FindAsync(id);
+            var movie = await _repo.GetByIdAsync(id.Value);
             if (movie != null)
             {
                 Movie = movie;
-                _context.Movie.Remove(Movie);
-                await _context.SaveChangesAsync();
+                await _repo.RemoveAsync(Movie);
             }
 
             return RedirectToPage("./Index");

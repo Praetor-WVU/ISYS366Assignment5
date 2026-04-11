@@ -16,6 +16,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ISYS366Assignment3Context>();
 
+builder.Services.AddScoped<IMovieRepo, MovieRepoEf>();
+// builder.Services.AddSingleton<IMovieRepo, ISYS366Assignment5.Data.MovieRepoList>();
+
 builder.Services.AddAuthorization(options =>
 {
     // in our authorization options we add a policy

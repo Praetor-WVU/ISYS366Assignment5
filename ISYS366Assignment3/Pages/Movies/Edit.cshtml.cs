@@ -16,12 +16,12 @@ namespace ISYS366Assignment3.Pages.Movies
 {
     public class EditModel : PageModel
     {
-        private readonly ISYS366Assignment3.Data.ISYS366Assignment3Context _context;
+        private readonly IMovieRepo _repo;
         private readonly IWebHostEnvironment _env;
 
-        public EditModel(ISYS366Assignment3.Data.ISYS366Assignment3Context context, IWebHostEnvironment env)
+        public EditModel(IMovieRepo repo, IWebHostEnvironment env)
         {
-            _context = context;
+            _repo = repo;
             _env = env;
         }
 
@@ -35,7 +35,7 @@ namespace ISYS366Assignment3.Pages.Movies
                 return NotFound();
             }
 
-            var movie =  await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
+            var movie =  await _repo.GetByIdAsync(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -62,22 +62,22 @@ namespace ISYS366Assignment3.Pages.Movies
             else
             {
                 // preserve existing image uri when no new file uploaded
-                var existing = await _context.Movie.AsNoTracking().FirstOrDefaultAsync(m => m.Id == Movie.Id);
+                var existing = await _repo.GetByIdAsync(Movie.Id);
                 if (existing != null)
                 {
                     Movie.ImageUri = existing.ImageUri;
                 }
             }
 
-            _context.Attach(Movie).State = EntityState.Modified;
+            _repo.Attach(Movie).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _repo.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieExists(Movie.Id))
+                if (!await MovieExists(Movie.Id))
                 {
                     return NotFound();
                 }
@@ -90,9 +90,10 @@ namespace ISYS366Assignment3.Pages.Movies
             return RedirectToPage("./Index");
         }
 
-        private bool MovieExists(int id)
+        private async Task<bool> MovieExists(int id)
         {
-            return _context.Movie.Any(e => e.Id == id);
+            var movie = await _repo.GetByIdAsync(id);
+            return movie != null;
         }
     }
 }

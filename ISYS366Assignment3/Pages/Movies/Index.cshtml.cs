@@ -13,11 +13,11 @@ namespace ISYS366Assignment3.Pages.Movies
 {
     public class IndexModel : PageModel
     {
-        private readonly ISYS366Assignment3.Data.ISYS366Assignment3Context _context;
+        private readonly IMovieRepo _repo;
 
-        public IndexModel(ISYS366Assignment3.Data.ISYS366Assignment3Context context)
+        public IndexModel(IMovieRepo repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         public IList<Movie> Movie { get;set; } = default!;
@@ -32,32 +32,15 @@ namespace ISYS366Assignment3.Pages.Movies
 
         public async Task OnGetAsync()
         {
-            // <snippet_search_linqQuery>
-            IQueryable<string> genreQuery = from m in _context.Movie
-                                            orderby m.Genre
-                                            select m.Genre;
-            // </snippet_search_linqQuery>
-
-            var movies = from m in _context.Movie
-                         select m;
-
-            if (!string.IsNullOrEmpty(SearchString))
-            {
-                movies = movies.Where(s => s.Title.Contains(SearchString));
-            }
-
-            if (!string.IsNullOrEmpty(MovieGenre))
-            {
-                movies = movies.Where(x => x.Genre == MovieGenre);
-            }
-
-            // Order movies by Rank
-            movies = movies.OrderBy(m => m.Rank);
-
-            // <snippet_search_selectList>
-            Genres = new SelectList(await genreQuery.Distinct().ToListAsync());
-            // </snippet_search_selectList>
-            Movie = await movies.ToListAsync();
+            // await a materialized collection then run LINQ-to-Objects
+            var all = await _repo.GetAllAsync();
+            var genres = all.Select(m => m.Genre).Distinct().OrderBy(g => g).ToList();
+            Genres = new SelectList(genres);
+            Movie = all.Where(m => 
+                (string.IsNullOrEmpty(SearchString) || m.Title.Contains(SearchString)) && 
+                (string.IsNullOrEmpty(MovieGenre) || m.Genre == MovieGenre))
+                .OrderBy(m => m.Rank)
+                .ToList();
         }
     }
 }

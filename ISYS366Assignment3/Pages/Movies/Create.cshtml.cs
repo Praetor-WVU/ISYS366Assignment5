@@ -13,12 +13,12 @@ namespace ISYS366Assignment3.Pages.Movies
 {
     public class CreateModel : PageModel
     {
-        private readonly ISYS366Assignment3.Data.ISYS366Assignment3Context _context;
+        private readonly IMovieRepo _repo;
         private readonly IWebHostEnvironment _env;
 
-        public CreateModel(ISYS366Assignment3.Data.ISYS366Assignment3Context context, IWebHostEnvironment env)
+        public CreateModel(IMovieRepo repo, IWebHostEnvironment env)
         {
-            _context = context;
+            _repo = repo;
             _env = env;
         }
 
@@ -44,8 +44,7 @@ namespace ISYS366Assignment3.Pages.Movies
                     HttpContext.Request.Form.Files[0]);
             }
 
-            _context.Movie.Add(Movie);
-            await _context.SaveChangesAsync();
+            await _repo.AddAsync(Movie);
 
             return RedirectToPage("./Index");
         }
